@@ -44,7 +44,7 @@ function process(s3Object, callback) {
         callback(null, message);
 
         const rqHost = 'https://www.road-quest.bike';
-        const postJsonData = {
+        let postJsonData = {
             // ここにファイル名を入れてAPIへPostしたいです。
             filename: '',
             status  : 'complete'
