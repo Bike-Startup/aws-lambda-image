@@ -13,6 +13,8 @@ const eventParser    = require("./lib/EventParser");
 const Config         = require("./lib/Config");
 const fs             = require("fs");
 const path           = require("path");
+const axios          = require("./lib/vendor/axios");
+
 
 // Lambda Handler
 exports.handler = (event, context, callback) => {
@@ -40,6 +42,14 @@ function process(s3Object, callback) {
         const message = "OK, " + processedImages + " images were processed.";
         console.log(message);
         callback(null, message);
+
+        const postJsonData = {
+            // ここにファイル名を入れてAPIへPostしたいです。
+            filename: '',
+            status  : 'complete'
+        };
+
+        axios.post('/api/v1/post_images/upload_flug_edit/');
         return;
     })
     .catch((messages) => {
