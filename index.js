@@ -43,13 +43,14 @@ function process(s3Object, callback) {
         console.log(message);
         callback(null, message);
 
+        const rqHost = 'https://www.road-quest.bike';
         const postJsonData = {
             // ここにファイル名を入れてAPIへPostしたいです。
             filename: '',
             status  : 'complete'
         };
 
-        axios.post('/api/v1/post_images/upload_flug_edit/');
+        axios.post(rqHost+'/api/v1/post_images/change_flug_edit',postJsonData);
         return;
     })
     .catch((messages) => {
