@@ -1,6 +1,6 @@
 {
   "lambda": {
-    "role": "aws-lambda-image-executor",
+    "role": "rq-aws-lambda-image-executor",
     "name": "rq-aws-lambda-image",
     "region": "ap-northeast-1"
   }

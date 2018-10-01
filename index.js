@@ -13,7 +13,7 @@ const eventParser    = require("./lib/EventParser");
 const Config         = require("./lib/Config");
 const fs             = require("fs");
 const path           = require("path");
-const axios          = require("./lib/vendor/axios");
+const request        = require('request');
 
 
 // Lambda Handler
@@ -43,14 +43,36 @@ function process(s3Object, callback) {
         console.log(message);
         callback(null, message);
 
-        const rqHost = 'https://www.road-quest.bike';
-        let postJsonData = {
-            // ここにファイル名を入れてAPIへPostしたいです。
-            filename: '',
-            status  : 'complete'
+        const strKey = s3Object.object.key;
+        const arrResultLey = strKey.split('/');
+
+        const resultEnv = arrResultLey[0];
+        const resultFileUUID = arrResultLey[3];
+        const resultFileName = arrResultLey[4];
+
+        const rqHost  = 'https://staging.road-quest.bike';
+        const headers = {
+          'Content-Type':'application/json'
+        }
+        const postJsonData = {
+            file_uuid : resultFileUUID,
+            file_name : resultFileName,
+            status    : 'complete'
         };
 
-        axios.post(rqHost+'/api/v1/post_images/change_flug_edit',postJsonData);
+        const options = {
+            uri: rqHost +'/api/v1/posts/update_image_process_status',
+            headers: headers,
+            json: postJsonData
+        }
+
+        request.post(options, function(error, response, body){
+            //callback
+        });
+
+        console.log('s3Object');
+        console.log(arrResultLey);
+
         return;
     })
     .catch((messages) => {
