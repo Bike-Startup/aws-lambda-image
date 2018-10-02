@@ -43,35 +43,70 @@ function process(s3Object, callback) {
         console.log(message);
         callback(null, message);
 
-        const strKey = s3Object.object.key;
-        const arrResultLey = strKey.split('/');
+        // call remote api
+        // -----------------------------------------------------------------------------------------------
+        let options;
 
-        const resultEnv = arrResultLey[0];
-        const resultFileUUID = arrResultLey[3];
-        const resultFileName = arrResultLey[4];
-
-        const rqHost  = 'https://staging.road-quest.bike';
         const headers = {
           'Content-Type':'application/json'
         }
+
+        const strKey         = s3Object.object.key;
+        const arrResultLey   = strKey.split('/');
+        const resultEnv      = arrResultLey[0];
+        const resultFileUUID = arrResultLey[3];
+        const resultFileName = arrResultLey[4];
+
         const postJsonData = {
             file_uuid : resultFileUUID,
             file_name : resultFileName,
             status    : 'complete'
         };
 
-        const options = {
-            uri: rqHost +'/api/v1/posts/update_image_process_status',
-            headers: headers,
-            json: postJsonData
+        const auth = {
+            user    : 'roadquest',
+            password: 'touge'
+        }
+
+        let   rqHost           = 'https://www.road-quest.bike';
+        const rqHostProduction = 'https://www.road-quest.bike';
+        const rqHostStaging    = 'https://staging.road-quest.bike';
+        const endPoint         = '/api/v1/posts/update_image_process_status';
+
+        switch(resultEnv){
+            case 'production':
+                rqHost = rqHostProduction + endPoint;
+                options = {
+                    uri: rqHost,
+                    headers: headers,
+                    json: postJsonData
+                }
+                break;
+            case 'staging':
+                rqHost = rqHostStaging + endPoint;
+                options = {
+                    uri: rqHost,
+                    headers: headers,
+                    auth: auth,
+                    json: postJsonData
+                }
+                break;
+            default:
+                rqHost = rqHostStaging + endPoint;
+                options = {
+                    uri: rqHost,
+                    headers: headers,
+                    json: postJsonData
+                }
+                break;
         }
 
         request.post(options, function(error, response, body){
             //callback
         });
 
-        console.log('s3Object');
-        console.log(arrResultLey);
+        // -----------------------------------------------------------------------------------------------\
+        // end :call remote api
 
         return;
     })
