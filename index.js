@@ -52,10 +52,10 @@ function process(s3Object, callback) {
         }
 
         const strKey         = s3Object.object.key;
-        const arrResultLey   = strKey.split('/');
-        const resultEnv      = arrResultLey[0];
-        const resultFileUUID = arrResultLey[3];
-        const resultFileName = arrResultLey[4];
+        const arrResultKey   = strKey.split('/');
+        const resultEnv      = arrResultKey[0];
+        const resultFileUUID = arrResultKey[3];
+        const resultFileName = arrResultKey[4];
 
         const postJsonData = {
             file_uuid : resultFileUUID,
