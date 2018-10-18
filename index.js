@@ -46,6 +46,7 @@ function process(s3Object, callback) {
         // call remote api
         // -----------------------------------------------------------------------------------------------
         let options;
+        const editFilePrefix = 'edited_';
 
         const headers = {
           'Content-Type':'application/json'
@@ -59,7 +60,8 @@ function process(s3Object, callback) {
 
         const postJsonData = {
             file_uuid : resultFileUUID,
-            file_name : resultFileName,
+            file_name : editFilePrefix + convertFileExtension(resultFileName),
+            raw_file_name : resultFileName,
             status    : 'complete'
         };
 
@@ -124,4 +126,71 @@ function process(s3Object, callback) {
             return;
         }
     });
+}
+
+
+function judgeExtension(extesion)
+{
+    let rtnExtension;
+    rtnExtension = '';
+
+
+    switch(extesion){
+        case 'gif':
+            rtnExtension = '.gif';
+            break;
+        case 'GIF':
+            rtnExtension = '.gif';
+            break;
+
+        case 'jpg':
+            rtnExtension = '.jpg';
+            break;
+        case 'JPG':
+            rtnExtension = '.jpg';
+            break;
+        case 'jpeg':
+            rtnExtension = '.jpg';
+            break;
+        case 'JPEG':
+            rtnExtension = '.jpg';
+            break;
+        case 'png':
+            rtnExtension = '.png';
+            break;
+        case 'PNG':
+            rtnExtension = '.png';
+            break;
+        // case 'heic':
+        //     rtnExtension = '.heic';
+        //     break;
+        // case 'HEIC':
+        //     rtnExtension = '.heic';
+        //     break;
+        default:
+            break;
+
+    }
+
+    return rtnExtension;
+
+}
+
+
+function convertFileExtension( filename )
+{
+    let rtnFilename;
+    const editFilename = filename;
+    const arrFilename = editFilename.split('.');
+    const indexExtension = arrFilename.length -1;
+
+    rtnFilename ='';
+    for ( let i = 0;  i < indexExtension;  i++  ) {
+        rtnFilename +=  arrFilename[i];
+    }
+    const strJudgeExtension = judgeExtension(arrFilename[indexExtension]);
+    rtnFilename = rtnFilename + strJudgeExtension;
+
+    return rtnFilename;
+
 }
